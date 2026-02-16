@@ -7,27 +7,20 @@ import Niri 0.1
 import "./modules/bar/"
 
 ShellRoot{
-    
+
     id: root
 
     Colors{
         id: colors
     }
 
-    // FloatingWindow{
-    //     visible: true
-    //     width: 400
-    //     height: 300
-    //     color: colors.background
-    //     Text{
-    //         anchors.centerIn: parent
-    //         text: "This is a floating window. It can be dragged and resized."
-    //         color: colors.on_background
-    //         font.family: "Google Sans Rounded"
-    //         font.pixelSize: 14
-    //     }
-    // }
-    
+    Variants {
+        model: Quickshell.screens
+        Bar {
+            property var modelData
+            screen: modelData
+        }
+    }
 
     Niri {
         id: niri
@@ -38,6 +31,4 @@ ShellRoot{
             console.error("Niri error:", error)
         }
     }
-
-    LazyLoader{ active: true; component: Bar{} }
 }
