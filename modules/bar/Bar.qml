@@ -33,7 +33,7 @@ PanelWindow {
                 verticalCenter: parent.verticalCenter
                 leftMargin: 0
             }
-            Loader { active: true; sourceComponent: Workspaces {} }
+            Loader { active: true; sourceComponent: Workspaces { monitorName: bar.screen.name } }
         }
         // center
         RowLayout {

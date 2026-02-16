@@ -3,6 +3,8 @@ import QtQuick.Layouts
 import Quickshell
 
 Rectangle {
+    property string monitorName: ""
+    
     anchors.left: parent.left
     color: "transparent"
     height: 25
@@ -36,7 +38,7 @@ Rectangle {
                         anchors.centerIn: parent
                         color: model.isActive ? colors.on_primary : colors.surface_container_highest
                     }
-                    visible: index < 11
+                    visible: (model.output === monitorName) && (index < 11)
                     Layout.preferredWidth: model.isActive ? 30 : 15
                     Layout.preferredHeight: 15
                     Layout.alignment: Qt.AlignVCenter
