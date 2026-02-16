@@ -32,7 +32,7 @@ Rectangle {
 
                 Rectangle {
                     Text {
-                        text: index + 1
+                        text: index
                         font.family: "Google Sans Rounded"
                         font.pixelSize: 10
                         anchors.centerIn: parent
