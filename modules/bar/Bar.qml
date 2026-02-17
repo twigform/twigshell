@@ -44,7 +44,11 @@ PanelWindow {
 
             Text {
                 text: niri.focusedWindow?.title ?? ""
-                font.family: "Google Sans Rounded"
+                font.family: "Google Sans Flex"
+                font.variableAxes: {
+                    "ROND": 100,
+                    "wght": 650
+                }
                 font.pixelSize: 16
                 color: colors.on_background
             }

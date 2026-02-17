@@ -14,8 +14,13 @@ Rectangle {
         }
         text: Qt.formatDateTime(clock.date, "hh:mm AP dd MMM, yyyy")
         color: colors.on_background
-        font.family: "Google Sans Rounded"
+        font.family: "Google Sans Flex"
         font.pixelSize: 16
+        font.variableAxes: {
+            "ROND": 100,
+            "wght": 650
+        }
+
         Component.onCompleted: {
             parent.width = timeBlock.contentWidth
         }

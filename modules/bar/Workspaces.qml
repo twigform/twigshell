@@ -33,8 +33,12 @@ Rectangle {
                 Rectangle {
                     Text {
                         text: index
-                        font.family: "Google Sans Rounded"
-                        font.pixelSize: 10
+                        font.family: "Google Sans Flex"
+                        font.pixelSize: 12
+                        font.variableAxes: {
+                            "ROND": 100,
+                            "wght": 650
+                        }
                         anchors.centerIn: parent
                         color: model.isActive ? colors.on_primary : colors.surface_container_highest
                     }
