@@ -58,7 +58,7 @@ PanelWindow {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 25
+                rightMargin: 10
             }
             spacing: 10
             Loader { active: true; sourceComponent: Time {} }
