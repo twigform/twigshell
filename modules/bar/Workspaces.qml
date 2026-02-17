@@ -37,7 +37,7 @@ Rectangle {
                         font.pixelSize: 12
                         font.variableAxes: {
                             "ROND": 100,
-                            "wght": 650
+                            "wght": 800
                         }
                         anchors.centerIn: parent
                         color: model.isActive ? colors.on_primary : colors.surface_container_highest

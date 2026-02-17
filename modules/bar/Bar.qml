@@ -43,7 +43,12 @@ PanelWindow {
             }
 
             Text {
-                text: niri.focusedWindow?.title ?? ""
+                property int maxTitleLength: 35
+                function truncatedTitle(title) {
+                    if (!title) return "";
+                    return title.length > maxTitleLength ? title.substring(0, maxTitleLength) + "..." : title;
+                }
+                text: truncatedTitle(niri.focusedWindow?.title)
                 font.family: "Google Sans Flex"
                 font.variableAxes: {
                     "ROND": 100,
@@ -61,6 +66,7 @@ PanelWindow {
                 rightMargin: 10
             }
             spacing: 10
+            Loader { active: true; sourceComponent: Audio {} }
             Loader { active: true; sourceComponent: Time {} }
         }
     }
