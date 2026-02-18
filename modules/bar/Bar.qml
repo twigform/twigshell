@@ -21,10 +21,7 @@ PanelWindow {
         anchors.rightMargin: 8
         anchors.fill: parent
         color: colors.background
-        bottomLeftRadius: 10
-        bottomRightRadius: 10
-        topLeftRadius: 10
-        topRightRadius: 10
+        radius: 10
         
         // left
         RowLayout {

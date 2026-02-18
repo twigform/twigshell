@@ -10,7 +10,7 @@ Item {
     }
 
     // width: 70
-    width: volumeText.implicitWidth + 16
+    width: volumeText.implicitWidth + 30
     height: 25
 
     property int volumeLevel: 0
@@ -47,12 +47,25 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: colors.surface_container_highest
+        // color: colors.surface_container_highest
+        // radius: 20
+        // anchors.margins: 2        
+        color: "transparent"
 
         Text {
             id: volumeText
             anchors.centerIn: parent
-            text:"    " + volumeLevel + "%"
+            text: {
+                let icon = "";
+                if (volumeLevel === 0) {
+                    icon = "";
+                } else if (volumeLevel < 50) {
+                    icon = "";
+                } else {
+                    icon = "";
+                }
+                return icon + "    " + volumeLevel + "%";
+            }
             color: colors.on_background
             font.family: "Google Sans Flex"
             font.variableAxes: {
@@ -64,7 +77,10 @@ Item {
 
         MouseArea {
             anchors.fill: parent
-            acceptedButtons: Qt.NoButton
+            acceptedButtons: Qt.LeftButton | Qt.NoButton
+            onClicked: {
+                launchWiremixProc.running = true;
+            }
             onWheel: function(wheel) {
                 let delta = wheel.angleDelta.y > 0 ? 5 : -5;
                 let newVolume = Math.max(0, Math.min(100, root.volumeLevel + delta));
@@ -73,6 +89,11 @@ Item {
                     setVolumeProc.setVolume(newVolume);
                 }
             }
+        }
+        Process {
+            id: launchWiremixProc
+            command: ["kitty", "wiremix"]
+            running: false
         }
     }
 }

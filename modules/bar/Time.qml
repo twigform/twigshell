@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 
 Rectangle {
+    
     SystemClock {
         id: clock
         precision: SystemClock.Seconds

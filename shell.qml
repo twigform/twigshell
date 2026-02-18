@@ -3,8 +3,6 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
-
-// import Quickshell.Service.Pipewire
 import Niri 0.1
 import "./modules/bar/"
 
