@@ -64,6 +64,7 @@ PanelWindow {
             }
             spacing: 10
             Loader { active: true; sourceComponent: Media {} }
+            Loader { active: true; sourceComponent: Tray {} }
             Loader { active: true; sourceComponent: Audio {} }
             Loader { active: true; sourceComponent: Time {} }
         }

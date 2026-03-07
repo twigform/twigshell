@@ -86,6 +86,17 @@ Item {
         spacing: 8
 
         Text {
+            text: root.displayText
+            color: colors.on_background
+            font.family: "Google Sans Flex"
+            font.variableAxes: { "ROND": 100, "wght": 650 }
+            font.pixelSize: 16
+            elide: Text.ElideRight
+            Layout.maximumWidth: 200
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        Text {
             text: "󰒮"
             color: colors.on_background
             font.family: "Google Sans Flex"
@@ -101,17 +112,6 @@ Item {
                         root.currentPlayer.previous();
                 }
             }
-        }
-
-        Text {
-            text: root.displayText
-            color: colors.on_background
-            font.family: "Google Sans Flex"
-            font.variableAxes: { "ROND": 100, "wght": 650 }
-            font.pixelSize: 16
-            elide: Text.ElideRight
-            Layout.maximumWidth: 200
-            Layout.alignment: Qt.AlignVCenter
         }
 
         Text {
