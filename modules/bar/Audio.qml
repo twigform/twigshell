@@ -77,6 +77,7 @@ Item {
 
         MouseArea {
             anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.NoButton
             onClicked: {
                 launchWiremixProc.running = true;

@@ -57,6 +57,16 @@ PopupWindow {
                     width: menuColumn.width
                     height: modelData.isSeparator ? 9 : 30
 
+                    scale: entryMouse.containsMouse && !modelData.isSeparator ? 1.02 : 1.0
+                    transformOrigin: Item.Center
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 320
+                            easing.type: Easing.OutBack
+                        }
+                    }
+
                     Rectangle {
                         visible: modelData.isSeparator
                         anchors.centerIn: parent
@@ -78,6 +88,10 @@ PopupWindow {
                               )
                             : "transparent"
                         radius: 6
+
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
                     }
 
                     Text {
