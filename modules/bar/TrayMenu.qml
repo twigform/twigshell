@@ -28,7 +28,7 @@ PopupWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: colors.surface_container
+        color: colors.surface
         radius: 8
         border.color: colors.outline_variant
         border.width: 1
