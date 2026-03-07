@@ -50,6 +50,7 @@ Rectangle {
                     height: 15
                     radius: model.isActive ? 5 : 10
                     color: model.isActive ? colors.primary : colors.surface_container_highest
+                    
                     Behavior on color {
                         ColorAnimation {
                             duration: 100
