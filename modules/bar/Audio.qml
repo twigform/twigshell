@@ -10,8 +10,12 @@ Item {
     }
 
     // width: 70
-    width: volumeText.implicitWidth + 30
-    height: 25
+    implicitWidth: volumeText.implicitWidth + 30
+    implicitHeight: 25
+
+    Behavior on implicitWidth {
+        NumberAnimation { duration: 200; easing.type: Easing.InOutCubic }
+    }
 
     property int volumeLevel: 0
 
