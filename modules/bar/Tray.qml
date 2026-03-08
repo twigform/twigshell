@@ -54,13 +54,14 @@ Item {
 
     Component.onCompleted: root.updateItems()
 
-    function openMenu(item, anchor) {
+    function openMenu(item, anchor, isRightmost) {
         if (trayMenu.visible && trayMenu.trayItem === item) {
             trayMenu.visible = false
             return
         }
         trayMenu.trayItem = item
         trayMenu.anchorItem = anchor
+        trayMenu.isRightmost = isRightmost ?? false
         trayMenu.visible = true
     }
 
@@ -129,9 +130,10 @@ Item {
                     cursorShape: Qt.PointingHandCursor
 
                     onClicked: function(mouse) {
+                        const last = index === root.trayItems.length - 1
                         if (mouse.button === Qt.LeftButton) {
                             if (modelData.onlyMenu && modelData.menu) {
-                                root.openMenu(modelData, iconDelegate)
+                                root.openMenu(modelData, iconDelegate, last)
                             } else {
                                 trayMenu.visible = false
                                 modelData.activate()
@@ -141,7 +143,7 @@ Item {
                             modelData.secondaryActivate()
                         } else if (mouse.button === Qt.RightButton) {
                             if (modelData.menu) {
-                                root.openMenu(modelData, iconDelegate)
+                                root.openMenu(modelData, iconDelegate, last)
                             }
                         }
                     }
