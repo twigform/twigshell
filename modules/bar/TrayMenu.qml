@@ -11,7 +11,7 @@ PopupWindow {
     property bool isRightmost: false
 
     anchor.item: anchorItem
-    anchor.rect.x: anchorItem ? Math.max(0, (anchorItem.width / 2) - (implicitWidth / 2)) - (isRightmost ? 12 : 0) : 0
+    anchor.rect.x: anchorItem ? Math.max(0, (anchorItem.width / 2) - (implicitWidth / 2)) - (isRightmost ? 16 : 0) : 0
     anchor.rect.y: anchorItem ? anchorItem.height + 6 : 0
 
     visible: false

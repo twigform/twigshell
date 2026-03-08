@@ -60,8 +60,8 @@ Item {
             return
         }
         trayMenu.trayItem = item
-        trayMenu.anchorItem = anchor
         trayMenu.isRightmost = isRightmost ?? false
+        trayMenu.anchorItem = anchor
         trayMenu.visible = true
     }
 
