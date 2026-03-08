@@ -22,6 +22,14 @@ ShellRoot{
         }
     }
 
+    Variants {
+        model: Quickshell.screens
+        VolumeOSD {
+            property var modelData
+            screen: modelData
+        }
+    }
+    
     Niri {
         id: niri
         Component.onCompleted: connect()
