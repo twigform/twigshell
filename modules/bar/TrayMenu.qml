@@ -19,6 +19,23 @@ PopupWindow {
 
     readonly property var menuHandle: trayItem?.menu ?? null
 
+    function closeMenu() {
+        hideAnim.start()
+    }
+
+    ParallelAnimation {
+        id: showAnim
+        NumberAnimation { target: menuContent; property: "opacity"; to: 1.0;  duration: 200; easing.type: Easing.OutCubic }
+        NumberAnimation { target: menuContent; property: "scale";   to: 1.0;  duration: 200; easing.type: Easing.OutCubic }
+    }
+
+    ParallelAnimation {
+        id: hideAnim
+        NumberAnimation { target: menuContent; property: "opacity"; to: 0.0;  duration: 150; easing.type: Easing.InCubic }
+        NumberAnimation { target: menuContent; property: "scale";   to: 0.96; duration: 150; easing.type: Easing.InCubic }
+        onFinished: root.visible = false
+    }
+
     QsMenuOpener {
         id: menuOpener
         menu: root.menuHandle
@@ -28,11 +45,15 @@ PopupWindow {
     implicitHeight: menuColumn.implicitHeight + 16
 
     Rectangle {
+        id: menuContent
         anchors.fill: parent
         color: colors.surface
         radius: 8
         border.color: colors.outline_variant
         border.width: 1
+        opacity: 0
+        scale: 0.96
+        transformOrigin: Item.Top
 
         layer.enabled: true
 
@@ -130,7 +151,7 @@ PopupWindow {
                         onClicked: {
                             if (!modelData.isSeparator) {
                                 modelData.triggered()
-                                root.visible = false
+                                root.closeMenu()
                             }
                         }
                     }
@@ -139,10 +160,14 @@ PopupWindow {
         }
     }
 
-    Keys.onEscapePressed: root.visible = false
+    Keys.onEscapePressed: root.closeMenu()
 
     onVisibleChanged: {
-        if (!visible) {
+        if (visible) {
+            menuContent.opacity = 0
+            menuContent.scale = 0.96
+            showAnim.start()
+        } else {
             Qt.callLater(() => { root.trayItem = null })
         }
     }

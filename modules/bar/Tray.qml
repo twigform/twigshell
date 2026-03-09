@@ -56,7 +56,7 @@ Item {
 
     function openMenu(item, anchor, isRightmost) {
         if (trayMenu.visible && trayMenu.trayItem === item) {
-            trayMenu.visible = false
+            trayMenu.closeMenu()
             return
         }
         trayMenu.trayItem = item
