@@ -47,7 +47,12 @@ Item {
         }
     }
 
-    Component.onCompleted: getVolumeProc.running = true;
+    Timer {
+        interval: 200
+        repeat: true
+        running: true
+        onTriggered: getVolumeProc.running = true
+    }
 
     Rectangle {
         anchors.fill: parent
