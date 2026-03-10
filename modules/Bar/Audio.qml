@@ -14,7 +14,10 @@ Item {
     implicitHeight: 25
 
     Behavior on implicitWidth {
-        NumberAnimation { duration: 200; easing.type: Easing.InOutCubic }
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.InOutCubic
+        }
     }
 
     property int volumeLevel: 0
@@ -24,7 +27,7 @@ Item {
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
         running: false
         stdout: SplitParser {
-            onRead: function(data) {
+            onRead: function (data) {
                 let match = data.match(/Volume:\s*([0-9.]+)/);
                 if (match) {
                     root.volumeLevel = Math.round(parseFloat(match[1]) * 100);
@@ -58,7 +61,7 @@ Item {
         anchors.fill: parent
         // color: colors.surface_container_highest
         // radius: 20
-        // anchors.margins: 2        
+        // anchors.margins: 2
         color: "transparent"
 
         Text {
@@ -91,7 +94,7 @@ Item {
             onClicked: {
                 launchWiremixProc.running = true;
             }
-            onWheel: function(wheel) {
+            onWheel: function (wheel) {
                 let delta = wheel.angleDelta.y > 0 ? 5 : -5;
                 let newVolume = Math.max(0, Math.min(100, root.volumeLevel + delta));
                 if (newVolume !== root.volumeLevel) {

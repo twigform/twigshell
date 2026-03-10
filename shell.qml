@@ -6,12 +6,15 @@ import Quickshell.Wayland
 import Niri 0.1
 import "./modules/Bar/"
 
-ShellRoot{
-
+ShellRoot {
     id: root
 
-    Colors{
+    Colors {
         id: colors
+    }
+
+    Styles {
+        id: styles
     }
 
     Variants {
@@ -29,14 +32,14 @@ ShellRoot{
             screen: modelData
         }
     }
-    
+
     Niri {
         id: niri
         Component.onCompleted: connect()
 
         onConnected: console.info("Connected to niri")
-        onErrorOccurred: function(error) {
-            console.error("Niri error:", error)
+        onErrorOccurred: function (error) {
+            console.error("Niri error:", error);
         }
     }
 }

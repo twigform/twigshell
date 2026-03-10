@@ -20,19 +20,43 @@ PopupWindow {
     readonly property var menuHandle: trayItem?.menu ?? null
 
     function closeMenu() {
-        hideAnim.start()
+        hideAnim.start();
     }
 
     ParallelAnimation {
         id: showAnim
-        NumberAnimation { target: menuContent; property: "opacity"; to: 1.0;  duration: 200; easing.type: Easing.OutCubic }
-        NumberAnimation { target: menuContent; property: "scale";   to: 1.0;  duration: 200; easing.type: Easing.OutCubic }
+        NumberAnimation {
+            target: menuContent
+            property: "opacity"
+            to: 1.0
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: menuContent
+            property: "scale"
+            to: 1.0
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
     }
 
     ParallelAnimation {
         id: hideAnim
-        NumberAnimation { target: menuContent; property: "opacity"; to: 0.0;  duration: 150; easing.type: Easing.InCubic }
-        NumberAnimation { target: menuContent; property: "scale";   to: 0.96; duration: 150; easing.type: Easing.InCubic }
+        NumberAnimation {
+            target: menuContent
+            property: "opacity"
+            to: 0.0
+            duration: 150
+            easing.type: Easing.InCubic
+        }
+        NumberAnimation {
+            target: menuContent
+            property: "scale"
+            to: 0.96
+            duration: 150
+            easing.type: Easing.InCubic
+        }
         onFinished: root.visible = false
     }
 
@@ -48,7 +72,7 @@ PopupWindow {
         id: menuContent
         anchors.fill: parent
         color: colors.surface
-        radius: 8
+        radius: styles.bRadius
         border.color: colors.outline_variant
         border.width: 1
         opacity: 0
@@ -101,18 +125,13 @@ PopupWindow {
                     Rectangle {
                         visible: !modelData.isSeparator
                         anchors.fill: parent
-                        color: entryMouse.containsMouse
-                            ? Qt.rgba(
-                                colors.primary_fixed.r,
-                                colors.primary_fixed.g,
-                                colors.primary_fixed.b,
-                                0.15
-                              )
-                            : "transparent"
-                        radius: 6
+                        color: entryMouse.containsMouse ? Qt.rgba(colors.primary_fixed.r, colors.primary_fixed.g, colors.primary_fixed.b, 0.15) : "transparent"
+                        radius: styles.bRadius - 3
 
                         Behavior on color {
-                            ColorAnimation { duration: 150 }
+                            ColorAnimation {
+                                duration: 150
+                            }
                         }
                     }
 
@@ -126,16 +145,19 @@ PopupWindow {
                             rightMargin: 12
                         }
                         text: modelData.text || ""
-                        color: (modelData.enabled ?? true)
-                            ? colors.on_surface
-                            : colors.outline_variant
+                        color: (modelData.enabled ?? true) ? colors.on_surface : colors.outline_variant
                         font.family: "Google Sans Flex"
                         font.pixelSize: 14
-                        font.variableAxes: { "ROND": 100, "wght": 500 }
+                        font.variableAxes: {
+                            "ROND": 100,
+                            "wght": 500
+                        }
                         elide: Text.ElideRight
 
                         Behavior on color {
-                            ColorAnimation { duration: 80 }
+                            ColorAnimation {
+                                duration: 80
+                            }
                         }
                     }
 
@@ -143,15 +165,13 @@ PopupWindow {
                         id: entryMouse
                         anchors.fill: parent
                         hoverEnabled: true
-                        enabled: !modelData.isSeparator
-                            && (modelData.enabled ?? true)
-                            && root.visible
+                        enabled: !modelData.isSeparator && (modelData.enabled ?? true) && root.visible
                         cursorShape: Qt.PointingHandCursor
 
                         onClicked: {
                             if (!modelData.isSeparator) {
-                                modelData.triggered()
-                                root.closeMenu()
+                                modelData.triggered();
+                                root.closeMenu();
                             }
                         }
                     }
@@ -164,11 +184,13 @@ PopupWindow {
 
     onVisibleChanged: {
         if (visible) {
-            menuContent.opacity = 0
-            menuContent.scale = 0.96
-            showAnim.start()
+            menuContent.opacity = 0;
+            menuContent.scale = 0.96;
+            showAnim.start();
         } else {
-            Qt.callLater(() => { root.trayItem = null })
+            Qt.callLater(() => {
+                root.trayItem = null;
+            });
         }
     }
 }

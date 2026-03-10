@@ -4,25 +4,24 @@ import Quickshell
 
 PanelWindow {
     id: bar
-    
+
     anchors {
         top: true
         left: true
         right: true
     }
+
     implicitHeight: 35
     color: "transparent"
 
-    
-
     Rectangle {
-        anchors.topMargin: 8
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
+        anchors.topMargin: styles.barMargin
+        anchors.leftMargin: styles.barMargin
+        anchors.rightMargin: styles.barMargin
         anchors.fill: parent
         color: colors.background
-        radius: 10
-        
+        radius: styles.barRadius
+
         // left
         RowLayout {
             anchors {
@@ -30,7 +29,12 @@ PanelWindow {
                 verticalCenter: parent.verticalCenter
                 leftMargin: 0
             }
-            Loader { active: true; sourceComponent: Workspaces { monitorName: bar.screen.name } }
+            Loader {
+                active: true
+                sourceComponent: Workspaces {
+                    monitorName: bar.screen.name
+                }
+            }
         }
         // center
         RowLayout {
@@ -42,7 +46,8 @@ PanelWindow {
             Text {
                 property int maxTitleLength: 35
                 function truncatedTitle(title) {
-                    if (!title) return "";
+                    if (!title)
+                        return "";
                     return title.length > maxTitleLength ? title.substring(0, maxTitleLength) + "..." : title;
                 }
                 text: truncatedTitle(niri.focusedWindow?.title)
@@ -63,10 +68,22 @@ PanelWindow {
                 rightMargin: 10
             }
             spacing: 10
-            Loader { active: true; sourceComponent: Media {} }
-            Loader { active: true; sourceComponent: Tray {} }
-            Loader { active: true; sourceComponent: Audio {} }
-            Loader { active: true; sourceComponent: Time {} }
+            Loader {
+                active: true
+                sourceComponent: Media {}
+            }
+            Loader {
+                active: true
+                sourceComponent: Tray {}
+            }
+            Loader {
+                active: true
+                sourceComponent: Audio {}
+            }
+            Loader {
+                active: true
+                sourceComponent: Time {}
+            }
         }
     }
 }

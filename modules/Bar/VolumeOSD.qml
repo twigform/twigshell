@@ -20,19 +20,20 @@ PanelWindow {
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
 
-    property int  volumeLevel: 0
-    property int  lastVolume:  -1
-    property bool ready:       false
-    property bool popupShown:  false
+    property int volumeLevel: 0
+    property int lastVolume: -1
+    property bool ready: false
+    property bool popupShown: false
 
     Process {
         id: getVol
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
         running: false
         stdout: SplitParser {
-            onRead: function(line) {
+            onRead: function (line) {
                 let m = line.match(/Volume:\s*([0-9.]+)/);
-                if (!m) return;
+                if (!m)
+                    return;
                 let v = Math.round(parseFloat(m[1]) * 100);
                 if (root.ready && v !== root.lastVolume) {
                     root.volumeLevel = v;
@@ -65,10 +66,16 @@ PanelWindow {
         scale: 0.85
 
         Behavior on opacity {
-            NumberAnimation { duration: 350; easing.type: Easing.OutExpo }
+            NumberAnimation {
+                duration: 350
+                easing.type: Easing.OutExpo
+            }
         }
         Behavior on scale {
-            NumberAnimation { duration: 350; easing.type: Easing.OutBack }
+            NumberAnimation {
+                duration: 350
+                easing.type: Easing.OutBack
+            }
         }
 
         Timer {
@@ -84,24 +91,24 @@ PanelWindow {
         }
 
         function show() {
-            collapseTimer.stop()
-            root.popupShown = true
-            hideTimer.restart()
-            popup.opacity = 1.0
-            popup.scale  = 1.0
+            collapseTimer.stop();
+            root.popupShown = true;
+            hideTimer.restart();
+            popup.opacity = 1.0;
+            popup.scale = 1.0;
         }
 
         function hide() {
-            hideTimer.stop()
-            popup.opacity = 0
-            popup.scale  = 0.85
-            collapseTimer.restart()
+            hideTimer.stop();
+            popup.opacity = 0;
+            popup.scale = 0.85;
+            collapseTimer.restart();
         }
 
         Rectangle {
             anchors.fill: parent
             anchors.margins: 6
-            radius: 16
+            radius: styles.bRadius
             color: colors.surface
             border.color: colors.outline_variant
             border.width: 1
@@ -114,13 +121,18 @@ PanelWindow {
 
                 Text {
                     text: {
-                        if (root.volumeLevel === 0) return ""
-                        if (root.volumeLevel < 50)  return ""
-                        return ""
+                        if (root.volumeLevel === 0)
+                            return "";
+                        if (root.volumeLevel < 50)
+                            return "";
+                        return "";
                     }
                     color: colors.primary
                     font.family: "Google Sans Flex"
-                    font.variableAxes: { "ROND": 100, "wght": 500 }
+                    font.variableAxes: {
+                        "ROND": 100,
+                        "wght": 500
+                    }
                     font.pixelSize: 20
                     Layout.alignment: Qt.AlignVCenter
                 }
@@ -147,7 +159,10 @@ PanelWindow {
                         visible: width > 0
 
                         Behavior on width {
-                            NumberAnimation { duration: 200; easing.type: Easing.OutExpo }
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutExpo
+                            }
                         }
                     }
 
@@ -164,7 +179,10 @@ PanelWindow {
                         visible: width > 0
 
                         Behavior on x {
-                            NumberAnimation { duration: 200; easing.type: Easing.OutExpo }
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutExpo
+                            }
                         }
                     }
 
@@ -177,7 +195,10 @@ PanelWindow {
                         color: colors.primary
 
                         Behavior on x {
-                            NumberAnimation { duration: 200; easing.type: Easing.OutExpo }
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutExpo
+                            }
                         }
                     }
                 }
@@ -186,7 +207,10 @@ PanelWindow {
                     text: root.volumeLevel + "%"
                     color: colors.on_surface
                     font.family: "Google Sans Flex"
-                    font.variableAxes: { "ROND": 100, "wght": 650 }
+                    font.variableAxes: {
+                        "ROND": 100,
+                        "wght": 650
+                    }
                     font.pixelSize: 16
                     Layout.minimumWidth: 38
                     horizontalAlignment: Text.AlignRight
@@ -195,5 +219,4 @@ PanelWindow {
             }
         }
     }
-
 }
