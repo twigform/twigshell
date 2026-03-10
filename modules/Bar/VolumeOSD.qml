@@ -12,8 +12,8 @@ PanelWindow {
     margins.top: 35
     margins.right: 2
 
-    implicitWidth: 280
-    implicitHeight: 68
+    implicitWidth: popupShown ? 280 : 0
+    implicitHeight: popupShown ? 68 : 0
     color: "transparent"
 
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
@@ -23,6 +23,7 @@ PanelWindow {
     property int  volumeLevel: 0
     property int  lastVolume:  -1
     property bool ready:       false
+    property bool popupShown:  false
 
     Process {
         id: getVol
@@ -76,7 +77,15 @@ PanelWindow {
             onTriggered: popup.hide()
         }
 
+        Timer {
+            id: collapseTimer
+            interval: 360
+            onTriggered: root.popupShown = false
+        }
+
         function show() {
+            collapseTimer.stop()
+            root.popupShown = true
             hideTimer.restart()
             popup.opacity = 1.0
             popup.scale  = 1.0
@@ -86,6 +95,7 @@ PanelWindow {
             hideTimer.stop()
             popup.opacity = 0
             popup.scale  = 0.85
+            collapseTimer.restart()
         }
 
         Rectangle {
