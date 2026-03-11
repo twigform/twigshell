@@ -11,7 +11,7 @@ PanelWindow {
         right: true
     }
 
-    implicitHeight: 35
+    implicitHeight: styles.barHeight
     color: "transparent"
 
     Rectangle {

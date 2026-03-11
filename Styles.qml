@@ -7,4 +7,6 @@ QtObject {
     property real barRadius: 10
 
     property real barMargin: 8
+
+    property real barHeight: 35
 }
