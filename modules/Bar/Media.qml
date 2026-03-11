@@ -5,6 +5,11 @@ import Quickshell.Services.Mpris
 Item {
     id: root
 
+    readonly property int maxTextWidth: 200
+    readonly property int marqueeGap: 32
+    readonly property int edgeFadeWidth: 18
+    readonly property int leadingInset: 18
+
     anchors.verticalCenter: parent.verticalCenter
 
     property var currentPlayer: null
@@ -85,15 +90,123 @@ Item {
         anchors.centerIn: parent
         spacing: 8
 
-        Text {
-            text: root.displayText
-            color: colors.on_background
-            font.family: "Google Sans Flex"
-            font.variableAxes: { "ROND": 100, "wght": 650 }
-            font.pixelSize: 16
-            elide: Text.ElideRight
-            Layout.maximumWidth: 200
+        Item {
+            id: titleViewport
+            clip: true
+            implicitWidth: Math.min(root.maxTextWidth, titleMetrics.contentWidth)
+            implicitHeight: titleMetrics.implicitHeight
+            Layout.preferredWidth: implicitWidth
+            Layout.maximumWidth: root.maxTextWidth
             Layout.alignment: Qt.AlignVCenter
+
+            property bool shouldScroll: titleMetrics.contentWidth > width && root.displayText.length > 0
+            property real marqueeOffset: 0
+            property real cycleWidth: titleMetrics.contentWidth + root.marqueeGap + root.leadingInset
+
+            onShouldScrollChanged: {
+                if (!shouldScroll)
+                    marqueeOffset = 0;
+            }
+
+            onWidthChanged: {
+                if (!shouldScroll)
+                    marqueeOffset = 0;
+            }
+
+            Connections {
+                target: root
+
+                function onDisplayTextChanged() {
+                    titleViewport.marqueeOffset = 0;
+
+                    if (titleViewport.shouldScroll && root.visible)
+                        marqueeAnimation.restart();
+                }
+            }
+
+            Text {
+                id: titleMetrics
+                text: root.displayText
+                visible: false
+                color: colors.on_background
+                font.family: "Google Sans Flex"
+                font.variableAxes: { "ROND": 100, "wght": 650 }
+                font.pixelSize: 16
+            }
+
+            Item {
+                anchors.fill: parent
+                clip: true
+
+                Text {
+                    id: titleTextPrimary
+                    x: titleViewport.shouldScroll ? (root.leadingInset - titleViewport.marqueeOffset) : 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.displayText
+                    color: colors.on_background
+                    font.family: "Google Sans Flex"
+                    font.variableAxes: { "ROND": 100, "wght": 650 }
+                    font.pixelSize: 16
+                }
+
+                Text {
+                    id: titleTextSecondary
+                    visible: titleViewport.shouldScroll
+                    x: titleTextPrimary.x + titleViewport.cycleWidth
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.displayText
+                    color: colors.on_background
+                    font.family: "Google Sans Flex"
+                    font.variableAxes: { "ROND": 100, "wght": 650 }
+                    font.pixelSize: 16
+                }
+            }
+
+            Rectangle {
+                visible: titleViewport.shouldScroll
+                anchors {
+                    left: parent.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                width: Math.min(root.edgeFadeWidth, titleViewport.width / 2)
+                color: "transparent"
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: colors.background }
+                    GradientStop { position: 1.0; color: "transparent" }
+                }
+            }
+
+            Rectangle {
+                visible: titleViewport.shouldScroll
+                anchors {
+                    right: parent.right
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                width: Math.min(root.edgeFadeWidth, titleViewport.width / 2)
+                color: "transparent"
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: "transparent" }
+                    GradientStop { position: 1.0; color: colors.background }
+                }
+            }
+
+            SequentialAnimation on marqueeOffset {
+                id: marqueeAnimation
+                running: titleViewport.shouldScroll && root.visible
+                loops: Animation.Infinite
+
+                PauseAnimation { duration: 900 }
+                NumberAnimation {
+                    from: 0
+                    to: titleViewport.cycleWidth
+                    duration: Math.max(3500, titleViewport.cycleWidth * 32)
+                    easing.type: Easing.Linear
+                }
+            }
         }
 
         Text {
