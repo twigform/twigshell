@@ -15,7 +15,8 @@ Rectangle {
         }
         text: Qt.formatDateTime(clock.date, "hh:mm AP")
         color: colors.on_background
-        font.family: "Google Sans Flex"
+        font.family: styles.fontFamily
+        font.bold: true
         font.pixelSize: 16
         font.variableAxes: {
             "ROND": 100,

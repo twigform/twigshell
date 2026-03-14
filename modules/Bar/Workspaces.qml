@@ -33,7 +33,8 @@ Rectangle {
                 Rectangle {
                     Text {
                         text: index
-                        font.family: "Google Sans Flex"
+                        font.family: styles.fontFamily
+                        font.bold: true
                         font.pixelSize: 12
                         font.variableAxes: {
                             "ROND": 100,

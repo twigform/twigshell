@@ -129,7 +129,8 @@ Item {
                 text: root.displayText
                 visible: false
                 color: colors.on_background
-                font.family: "Google Sans Flex"
+                font.family: styles.fontFamily
+                font.bold: true
                 font.variableAxes: { "ROND": 100, "wght": 650 }
                 font.pixelSize: 16
             }
@@ -144,7 +145,8 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.displayText
                     color: colors.on_background
-                    font.family: "Google Sans Flex"
+                    font.family: styles.fontFamily
+                    font.bold: true
                     font.variableAxes: { "ROND": 100, "wght": 650 }
                     font.pixelSize: 16
                 }
@@ -156,7 +158,8 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.displayText
                     color: colors.on_background
-                    font.family: "Google Sans Flex"
+                    font.family: styles.fontFamily
+                    font.bold: true
                     font.variableAxes: { "ROND": 100, "wght": 650 }
                     font.pixelSize: 16
                 }
@@ -212,7 +215,8 @@ Item {
         Text {
             text: "󰒮"
             color: colors.on_background
-            font.family: "Google Sans Flex"
+            font.family: styles.fontFamily
+            font.bold: true
             font.pixelSize: 14
             opacity: (root.hasPlayer && root.currentPlayer.canGoPrevious) ? 1.0 : 0.4
             Layout.alignment: Qt.AlignVCenter
@@ -230,7 +234,8 @@ Item {
         Text {
             text: root.isPlaying ? "" : ""
             color: colors.on_background
-            font.family: "Google Sans Flex"
+            font.family: styles.fontFamily
+            font.bold: true
             font.pixelSize: 14
             Layout.alignment: Qt.AlignVCenter
 
@@ -250,7 +255,8 @@ Item {
         Text {
             text: "󰒭"
             color: colors.on_background
-            font.family: "Google Sans Flex"
+            font.family: styles.fontFamily
+            font.bold: true
             font.pixelSize: 14
             opacity: (root.hasPlayer && root.currentPlayer.canGoNext) ? 1.0 : 0.4
             Layout.alignment: Qt.AlignVCenter

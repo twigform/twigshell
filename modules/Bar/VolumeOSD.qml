@@ -128,7 +128,8 @@ PanelWindow {
                         return "";
                     }
                     color: colors.primary
-                    font.family: "Google Sans Flex"
+                    font.family: styles.fontFamily
+                    font.bold: true
                     font.variableAxes: {
                         "ROND": 100,
                         "wght": 500
@@ -206,7 +207,8 @@ PanelWindow {
                 Text {
                     text: root.volumeLevel + "%"
                     color: colors.on_surface
-                    font.family: "Google Sans Flex"
+                    font.family: styles.fontFamily
+                    font.bold: true
                     font.variableAxes: {
                         "ROND": 100,
                         "wght": 650

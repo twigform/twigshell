@@ -79,7 +79,8 @@ Item {
                 return icon + "    " + volumeLevel + "%";
             }
             color: colors.on_background
-            font.family: "Google Sans Flex"
+            font.family: styles.fontFamily
+            font.bold: true
             font.variableAxes: {
                 "ROND": 100,
                 "wght": 650

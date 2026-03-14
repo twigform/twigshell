@@ -146,7 +146,8 @@ PopupWindow {
                         }
                         text: modelData.text || ""
                         color: (modelData.enabled ?? true) ? colors.on_surface : colors.outline_variant
-                        font.family: "Google Sans Flex"
+                        font.family: styles.fontFamily
+                        font.bold: true
                         font.pixelSize: 14
                         font.variableAxes: {
                             "ROND": 100,
