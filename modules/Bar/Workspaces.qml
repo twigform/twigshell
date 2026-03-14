@@ -40,7 +40,11 @@ Rectangle {
                             "ROND": 100,
                             "wght": 800
                         }
-                        anchors.centerIn: parent
+                        anchors{
+                            centerIn: parent
+                            verticalCenterOffset: -1
+                            horizontalCenterOffset: 0
+                        }
                         color: model.isActive ? colors.on_primary : colors.surface_container_highest
                     }
                     visible: (model.output === monitorName) && (index < 11)

@@ -12,6 +12,8 @@ Item {
     implicitWidth: 54
     implicitHeight: 25
 
+    property string targetScreenName: ""
+
     Behavior on implicitWidth {
         NumberAnimation {
             duration: 200
@@ -114,7 +116,7 @@ Item {
 
                 Behavior on width {
                     NumberAnimation {
-                        duration: 180
+                        duration: 200
                         easing.type: Easing.OutCubic
                     }
                 }
@@ -129,9 +131,20 @@ Item {
                     radius: parent.radius
                     color: colors.primary
 
+                    Rectangle {
+                        anchors {
+                            top: parent.top
+                            left: parent.left
+                            right: parent.right
+                        }
+                        height: Math.min(parent.radius, parent.height)
+                        color: parent.color
+                        visible: root.volumeLevel < 98
+                    }
+
                     Behavior on height {
                         NumberAnimation {
-                            duration: 170
+                            duration: 200
                             easing.type: Easing.OutCubic
                         }
                     }
@@ -144,7 +157,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.NoButton
             onClicked: {
-                launchWiremixProc.running = true;
+                osdBridge.toggleMediaOsd(root.targetScreenName);
             }
             onWheel: function (wheel) {
                 let delta = wheel.angleDelta.y > 0 ? 5 : -5;
@@ -155,11 +168,6 @@ Item {
                     root.pulseVolumePill();
                 }
             }
-        }
-        Process {
-            id: launchWiremixProc
-            command: ["kitty", "wiremix"]
-            running: false
         }
     }
 }

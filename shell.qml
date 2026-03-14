@@ -17,6 +17,12 @@ ShellRoot {
         id: styles
     }
 
+    QtObject {
+        id: osdBridge
+
+        signal toggleMediaOsd(string screenName)
+    }
+
     Variants {
         model: Quickshell.screens
         Bar {
@@ -28,6 +34,14 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         VolumeOSD {
+            property var modelData
+            screen: modelData
+        }
+    }
+
+    Variants {
+        model: Quickshell.screens
+        MediaOSD {
             property var modelData
             screen: modelData
         }

@@ -12,6 +12,7 @@ Rectangle {
         id: timeBlock
         anchors {
             verticalCenter: parent.verticalCenter
+            verticalCenterOffset: -2
         }
         text: Qt.formatDateTime(clock.date, "hh:mm AP")
         color: colors.on_background

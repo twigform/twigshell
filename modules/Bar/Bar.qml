@@ -41,6 +41,7 @@ PanelWindow {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 verticalCenter: parent.verticalCenter
+                verticalCenterOffset: -2
             }
 
             Text {
@@ -67,15 +68,13 @@ PanelWindow {
             spacing: 10
             Loader {
                 active: true
-                sourceComponent: Media {}
-            }
-            Loader {
-                active: true
                 sourceComponent: Tray {}
             }
             Loader {
                 active: true
-                sourceComponent: Audio {}
+                sourceComponent: Audio {
+                    targetScreenName: bar.screen.name
+                }
             }
             Loader {
                 active: true
