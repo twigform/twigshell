@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -7,13 +6,13 @@ import Quickshell.Wayland
 PanelWindow {
     id: root
 
-    anchors.top: true
-    anchors.right: true
-    margins.top: 35
-    margins.right: 2
+    anchors.bottom: true
+    anchors.left: true
+    margins.bottom: 0
+    margins.left: 4
 
-    implicitWidth: popupShown ? 280 : 0
-    implicitHeight: popupShown ? 68 : 0
+    implicitWidth: popupShown ? 152 : 0
+    implicitHeight: popupShown ? 152 : 0
     color: "transparent"
 
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
@@ -24,6 +23,16 @@ PanelWindow {
     property int lastVolume: -1
     property bool ready: false
     property bool popupShown: false
+    property real displayVolume: 0
+
+    onVolumeLevelChanged: displayVolume = volumeLevel
+
+    Behavior on displayVolume {
+        NumberAnimation {
+            duration: 240
+            easing.type: Easing.OutCubic
+        }
+    }
 
     Process {
         id: getVol
@@ -34,7 +43,7 @@ PanelWindow {
                 let m = line.match(/Volume:\s*([0-9.]+)/);
                 if (!m)
                     return;
-                let v = Math.round(parseFloat(m[1]) * 100);
+                let v = Math.max(0, Math.min(Math.round(parseFloat(m[1]) * 100), 100));
                 if (root.ready && v !== root.lastVolume) {
                     root.volumeLevel = v;
                     popup.show();
@@ -106,119 +115,64 @@ PanelWindow {
         }
 
         Rectangle {
-            anchors.fill: parent
-            anchors.margins: 6
-            radius: styles.bRadius
+            width: 140
+            height: 140
+            radius: width / 2
+            anchors.centerIn: parent
             color: colors.surface
-            border.color: colors.outline_variant
-            border.width: 1
 
-            RowLayout {
+            Canvas {
+                id: ringCanvas
                 anchors.fill: parent
-                anchors.leftMargin: 16
-                anchors.rightMargin: 16
-                spacing: 8
+                anchors.margins: 8
+                antialiasing: true
 
-                Text {
-                    text: {
-                        if (root.volumeLevel === 0)
-                            return "";
-                        if (root.volumeLevel < 50)
-                            return "";
-                        return "";
+                onPaint: {
+                    let ctx = getContext("2d");
+                    let w = width;
+                    let h = height;
+                    let size = Math.min(w, h);
+                    let centerX = w / 2;
+                    let centerY = h / 2;
+                    let radius = (size / 2) - 6;
+                    let start = -Math.PI / 2;
+                    let progress = Math.max(0, Math.min(root.displayVolume / 100, 1.0));
+
+                    ctx.clearRect(0, 0, w, h);
+                    ctx.lineWidth = 6;
+                    ctx.lineCap = "round";
+
+                    ctx.strokeStyle = colors.secondary_container;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
+                    ctx.stroke();
+
+                    if (progress > 0) {
+                        ctx.strokeStyle = colors.primary;
+                        ctx.beginPath();
+                        ctx.arc(centerX, centerY, radius, start, start + (Math.PI * 2 * progress), false);
+                        ctx.stroke();
                     }
-                    color: colors.primary
-                    font.family: styles.fontFamily
-                    font.bold: true
-                    font.variableAxes: {
-                        "ROND": 100,
-                        "wght": 500
-                    }
-                    font.pixelSize: 20
-                    Layout.alignment: Qt.AlignVCenter
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    height: 44
-                    Layout.alignment: Qt.AlignVCenter
-
-                    readonly property real handleW: 4
-                    readonly property real gap: 5
-                    readonly property real handleCenter: width * Math.min(root.volumeLevel / 100, 1.0)
-
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: 0
-                        width: Math.max(0, parent.handleCenter - parent.handleW / 2 - parent.gap)
-                        height: 12
-                        topLeftRadius: 6
-                        bottomLeftRadius: 6
-                        topRightRadius: 2
-                        bottomRightRadius: 2
-                        color: colors.primary
-                        visible: width > 0
-
-                        Behavior on width {
-                            NumberAnimation {
-                                duration: 200
-                                easing.type: Easing.OutExpo
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: parent.handleCenter + parent.handleW / 2 + parent.gap
-                        width: Math.max(0, parent.width - x)
-                        height: 12
-                        topLeftRadius: 2
-                        bottomLeftRadius: 2
-                        topRightRadius: 6
-                        bottomRightRadius: 6
-                        color: colors.secondary_container
-                        visible: width > 0
-
-                        Behavior on x {
-                            NumberAnimation {
-                                duration: 200
-                                easing.type: Easing.OutExpo
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: parent.handleCenter - width / 2
-                        width: 4
-                        height: 32
-                        radius: 2
-                        color: colors.primary
-
-                        Behavior on x {
-                            NumberAnimation {
-                                duration: 200
-                                easing.type: Easing.OutExpo
-                            }
-                        }
-                    }
-                }
-
-                Text {
-                    text: root.volumeLevel + "%"
-                    color: colors.on_surface
-                    font.family: styles.fontFamily
-                    font.bold: true
-                    font.variableAxes: {
-                        "ROND": 100,
-                        "wght": 650
-                    }
-                    font.pixelSize: 16
-                    Layout.minimumWidth: 38
-                    horizontalAlignment: Text.AlignRight
-                    Layout.alignment: Qt.AlignVCenter
                 }
             }
+
+            Text {
+                anchors.centerIn: parent
+                text: Math.round(root.displayVolume) + "%"
+                color: colors.on_surface
+                font.family: styles.fontFamily
+                font.bold: true
+                font.pixelSize: 26
+            }
+
+            Connections {
+                target: root
+                function onDisplayVolumeChanged() {
+                    ringCanvas.requestPaint();
+                }
+            }
+
+            Component.onCompleted: ringCanvas.requestPaint()
         }
     }
 }
