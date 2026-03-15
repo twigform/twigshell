@@ -21,6 +21,7 @@ ShellRoot {
         id: osdBridge
 
         signal toggleMediaOsd(string screenName)
+        signal mediaOsdVisibilityChanged(string screenName, bool visible)
     }
 
     Variants {

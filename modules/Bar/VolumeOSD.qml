@@ -6,31 +6,57 @@ import Quickshell.Wayland
 PanelWindow {
     id: root
 
-    anchors.bottom: true
-    anchors.left: true
-    margins.bottom: 0
-    margins.left: 4
+    anchors.top: true
+    anchors.right: true
+    margins.top: baseTopMargin
+    margins.right: baseRightMargin + rightOffset
 
-    implicitWidth: popupShown ? 152 : 0
-    implicitHeight: popupShown ? 152 : 0
+    implicitWidth: popupShown ? 92 : 0
+    implicitHeight: popupShown ? 228 : 0
     color: "transparent"
 
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
 
+    readonly property string screenName: screen ? screen.name : ""
+    readonly property int baseTopMargin: 45
+    readonly property int baseRightMargin: 8
+    readonly property int mediaAvoidDistance: 442
+    readonly property real cornerRadius: styles.bRadius
     property int volumeLevel: 0
     property int lastVolume: -1
     property bool ready: false
     property bool popupShown: false
     property bool popupHovered: false
+    property bool mediaOsdVisible: false
     property real displayVolume: 0
+    property real rightOffset: mediaOsdVisible ? mediaAvoidDistance : 0
 
     onVolumeLevelChanged: displayVolume = volumeLevel
+
+    function applyVolume(newVolume) {
+        const boundedVolume = Math.max(0, Math.min(Math.round(newVolume), 100));
+
+        if (boundedVolume === root.volumeLevel && boundedVolume === root.lastVolume)
+            return;
+
+        root.volumeLevel = boundedVolume;
+        root.lastVolume = boundedVolume;
+        setVol.setVolume(boundedVolume);
+        popup.show();
+    }
 
     Behavior on displayVolume {
         NumberAnimation {
             duration: 240
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    Behavior on rightOffset {
+        NumberAnimation {
+            duration: 260
             easing.type: Easing.OutCubic
         }
     }
@@ -81,6 +107,17 @@ PanelWindow {
         interval: 1000
         running: true
         onTriggered: root.ready = true
+    }
+
+    Connections {
+        target: osdBridge
+
+        function onMediaOsdVisibilityChanged(requestedScreenName, visible) {
+            if (requestedScreenName && requestedScreenName !== root.screenName)
+                return;
+
+            root.mediaOsdVisible = visible;
+        }
     }
 
     Item {
@@ -136,10 +173,9 @@ PanelWindow {
         }
 
         Rectangle {
-            width: 140
-            height: 140
-            radius: width / 2
-            anchors.centerIn: parent
+            id: card
+            anchors.fill: parent
+            radius: root.cornerRadius
             color: colors.surface
 
             MouseArea {
@@ -156,68 +192,116 @@ PanelWindow {
                 }
                 onWheel: function (wheel) {
                     let delta = wheel.angleDelta.y > 0 ? 5 : -5;
-                    let newVolume = Math.max(0, Math.min(100, root.volumeLevel + delta));
-                    if (newVolume !== root.volumeLevel) {
-                        root.volumeLevel = newVolume;
-                        root.lastVolume = newVolume;
-                        setVol.setVolume(newVolume);
-                        popup.show();
-                    }
+                    root.applyVolume(root.volumeLevel + delta);
                 }
             }
 
-            Canvas {
-                id: ringCanvas
+            Item {
                 anchors.fill: parent
-                anchors.margins: 8
-                antialiasing: true
+                anchors.margins: 18
 
-                onPaint: {
-                    let ctx = getContext("2d");
-                    let w = width;
-                    let h = height;
-                    let size = Math.min(w, h);
-                    let centerX = w / 2;
-                    let centerY = h / 2;
-                    let radius = (size / 2) - 6;
-                    let start = -Math.PI / 2;
-                    let progress = Math.max(0, Math.min(root.displayVolume / 100, 1.0));
+                Text {
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: Math.round(root.displayVolume) + "%"
+                    color: colors.on_surface
+                    font.family: styles.fontFamily
+                    font.bold: true
+                    font.pixelSize: 16
+                    font.variableAxes: {
+                        "ROND": 100,
+                        "wght": 650
+                    }
+                }
 
-                    ctx.clearRect(0, 0, w, h);
-                    ctx.lineWidth = 6;
-                    ctx.lineCap = "round";
+                Item {
+                    id: sliderTrack
+                    anchors.top: parent.top
+                    anchors.topMargin: 34
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 8
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: 32
 
-                    ctx.strokeStyle = colors.secondary_container;
-                    ctx.beginPath();
-                    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
-                    ctx.stroke();
+                    readonly property real handleH: 4
+                    readonly property real gap: 2
+                    readonly property real progressRatio: Math.max(0, Math.min(root.displayVolume / 100, 1))
+                    readonly property real handleCenter: Math.max(handleH / 2,
+                        Math.min(height - (progressRatio * height), height - handleH / 2))
 
-                    if (progress > 0) {
-                        ctx.strokeStyle = colors.primary;
-                        ctx.beginPath();
-                        ctx.arc(centerX, centerY, radius, start, start + (Math.PI * 2 * progress), false);
-                        ctx.stroke();
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: 0
+                        width: 12
+                        height: Math.max(0, parent.handleCenter - parent.handleH / 2 - parent.gap)
+                        topLeftRadius: 6
+                        topRightRadius: 6
+                        bottomLeftRadius: 2
+                        bottomRightRadius: 2
+                        color: colors.secondary_container
+                        visible: height > 0
+
+                        Behavior on height {
+                            NumberAnimation { duration: 200; easing.type: Easing.OutExpo }
+                        }
+                    }
+
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: parent.handleCenter + parent.handleH / 2 + parent.gap
+                        width: 12
+                        height: Math.max(0, parent.height - y)
+                        topLeftRadius: 2
+                        topRightRadius: 2
+                        bottomLeftRadius: 6
+                        bottomRightRadius: 6
+                        color: colors.primary
+                        visible: height > 0
+
+                        Behavior on y {
+                            NumberAnimation { duration: 200; easing.type: Easing.OutExpo }
+                        }
+                    }
+
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: parent.handleCenter - height / 2
+                        width: parent.width
+                        height: parent.handleH
+                        radius: 2
+                        color: colors.primary
+
+                        Behavior on y {
+                            NumberAnimation { duration: 200; easing.type: Easing.OutExpo }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        function updateVolume(mouseY) {
+                            const boundedY = Math.max(0, Math.min(mouseY, height));
+                            const ratio = 1 - (boundedY / height);
+                            root.applyVolume(ratio * 100);
+                        }
+
+                        onPressed: function (mouse) {
+                            updateVolume(mouse.y);
+                        }
+
+                        onPositionChanged: function (mouse) {
+                            if (pressed)
+                                updateVolume(mouse.y);
+                        }
+
+                        onClicked: function (mouse) {
+                            updateVolume(mouse.y);
+                        }
                     }
                 }
             }
-
-            Text {
-                anchors.centerIn: parent
-                text: Math.round(root.displayVolume) + "%"
-                color: colors.on_surface
-                font.family: styles.fontFamily
-                font.bold: true
-                font.pixelSize: 26
-            }
-
-            Connections {
-                target: root
-                function onDisplayVolumeChanged() {
-                    ringCanvas.requestPaint();
-                }
-            }
-
-            Component.onCompleted: ringCanvas.requestPaint()
         }
     }
 }

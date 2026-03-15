@@ -125,6 +125,7 @@ PanelWindow {
     }
 
     Component.onCompleted: updatePlayer()
+    onPopupShownChanged: osdBridge.mediaOsdVisibilityChanged(screenName, popupShown)
 
     Connections {
         target: osdBridge
@@ -389,9 +390,9 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             x: 0
                             width: Math.max(0, parent.handleCenter - parent.handleW / 2 - parent.gap)
-                            height: 8
-                            topLeftRadius: 4
-                            bottomLeftRadius: 4
+                            height: 12
+                            topLeftRadius: 6
+                            bottomLeftRadius: 6
                             topRightRadius: 2
                             bottomRightRadius: 2
                             color: colors.primary
@@ -406,11 +407,11 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             x: parent.handleCenter + parent.handleW / 2 + parent.gap
                             width: Math.max(0, parent.width - x)
-                            height: 8
+                            height: 12
                             topLeftRadius: 2
                             bottomLeftRadius: 2
-                            topRightRadius: 4
-                            bottomRightRadius: 4
+                            topRightRadius: 6
+                            bottomRightRadius: 6
                             color: colors.secondary_container
                             visible: width > 0
 
