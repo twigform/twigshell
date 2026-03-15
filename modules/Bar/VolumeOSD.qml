@@ -23,6 +23,7 @@ PanelWindow {
     property int lastVolume: -1
     property bool ready: false
     property bool popupShown: false
+    property bool popupHovered: false
     property real displayVolume: 0
 
     onVolumeLevelChanged: displayVolume = volumeLevel
@@ -52,6 +53,20 @@ PanelWindow {
                 }
                 root.lastVolume = v;
             }
+        }
+    }
+
+    Process {
+        id: setVol
+        property int targetVolume: 0
+        command: ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", (targetVolume / 100).toFixed(2)]
+        running: false
+        onTargetVolumeChanged: {
+            command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", (targetVolume / 100).toFixed(2)];
+        }
+        function setVolume(vol) {
+            targetVolume = vol;
+            running = true;
         }
     }
 
@@ -90,7 +105,13 @@ PanelWindow {
         Timer {
             id: hideTimer
             interval: 2200
-            onTriggered: popup.hide()
+            onTriggered: {
+                if (root.popupHovered) {
+                    hideTimer.restart();
+                    return;
+                }
+                popup.hide();
+            }
         }
 
         Timer {
@@ -120,6 +141,30 @@ PanelWindow {
             radius: width / 2
             anchors.centerIn: parent
             color: colors.surface
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                acceptedButtons: Qt.NoButton
+                onEntered: {
+                    root.popupHovered = true;
+                }
+                onExited: {
+                    root.popupHovered = false;
+                    if (popup.opacity > 0)
+                        hideTimer.restart();
+                }
+                onWheel: function (wheel) {
+                    let delta = wheel.angleDelta.y > 0 ? 5 : -5;
+                    let newVolume = Math.max(0, Math.min(100, root.volumeLevel + delta));
+                    if (newVolume !== root.volumeLevel) {
+                        root.volumeLevel = newVolume;
+                        root.lastVolume = newVolume;
+                        setVol.setVolume(newVolume);
+                        popup.show();
+                    }
+                }
+            }
 
             Canvas {
                 id: ringCanvas
